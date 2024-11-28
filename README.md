@@ -398,7 +398,7 @@ async function run (url, reff, timeout=30, headers={}) {
     })
     while (!loaded && count < timeout) {
         count++
-        await delay(100)
+        await delay(1000)
     }
     console.log(dom.serialize())
     dom.window.close()
