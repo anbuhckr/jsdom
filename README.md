@@ -7,6 +7,12 @@ jsdom is a pure-JavaScript implementation of many web standards, notably the WHA
 
 The latest versions of jsdom require Node.js v18 or newer. (Versions of jsdom below v23 still work with previous Node.js versions, but are unsupported.)
 
+## Install
+
+```sh
+npm install git://github.com/anbuhckr/jsdom.git
+```
+
 ## Basic usage
 
 ```js
