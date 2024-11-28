@@ -378,9 +378,43 @@ Note that changing the jsdom's URL will impact all APIs that return the current 
 In addition to the `JSDOM` constructor itself, jsdom provides a promise-returning factory method for constructing a jsdom from a URL:
 
 ```js
-JSDOM.fromURL("https://example.com/", options).then(dom => {
-  console.log(dom.serialize());
-});
+const jsdom = require('jsdom')
+const JSDOM = jsdom.JSDOM
+
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+async function run (url, reff, timeout=30, headers={}) {
+    const {dom, respHeaders} = await JSDOM.fromURL(url, {
+        referrer: reff,
+        headers: headers,
+        runScripts: 'dangerously',
+        resources: 'usable',
+        pretendToBeVisual: true,
+    })
+    let loaded = false
+    let count = 0
+    dom.window.addEventListener('load', () => {
+        loaded = true
+    })
+    while (!loaded && count < timeout) {
+        count++
+        await delay(100)
+    }
+    console.log(dom.serialize())
+    dom.window.close()
+    console.log(respHeaders)
+}
+
+async function main() {
+    const url = 'https://httpbin.org/headers'
+    const reff = 'https://google.com/'
+    const headers = {
+        'X-Custom-Header': 'custom_header',
+    }
+    await run(url, reff, 10, headers)
+}
+
+main()
 ```
 
 The returned promise will fulfill with a `JSDOM` instance if the URL is valid and the request is successful. Any redirects will be followed to their ultimate destination.
